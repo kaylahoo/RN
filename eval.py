@@ -72,10 +72,9 @@ def eval():
 
         # t0 = time.clock()
         with torch.no_grad():
-            print(gt.shape, mask.shape)
+
             prediction = model.generator(gt, mask)
-            print(gt.shape, mask.shape)
-            print(prediction.shape)
+
 
             prediction = prediction * mask + gt * (1 - mask)
             batch_avg_lpips = loss_fn_alex(prediction, gt).mean()
