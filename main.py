@@ -32,7 +32,7 @@ parser = argparse.ArgumentParser(description='Region Normalization for Image Inp
 parser.add_argument('--bs', type=int, default=4, help='training batch size')#14
 parser.add_argument('--input_size', type=int, default=256, help='input image size')
 parser.add_argument('--start_epoch', type=int, default=1, help='Starting epoch for continuing training')
-parser.add_argument('--nEpochs', type=int, default=10, help='number of epochs to train for')
+parser.add_argument('--nEpochs', type=int, default=50, help='number of epochs to train for')
 parser.add_argument('--snapshots', type=int, default=1, help='Snapshots')
 parser.add_argument('--lr', type=float, default=0.0001, help='Learning Rate. Default=0.0001')
 parser.add_argument('--gpu_mode', type=bool, default=True)
