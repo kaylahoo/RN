@@ -61,6 +61,9 @@ class Dataset(torch.utils.data.Dataset):
         if self.training:
             if size != 0:
                 img = self.resize(img, size, size)
+        else:
+            if size != 0:
+                img = self.resize(img, size, size)
 
 
 
