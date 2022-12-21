@@ -211,7 +211,7 @@ if __name__ == '__main__':
     # print_network(model.discriminator)
     print('----------------------------------------------')
 
-    pretrained_model = torch.load(opt.model, map_location=lambda storage, loc: storage)
+    pretrained_model = torch.load(opt.model)
 
     model.generator = torch.nn.DataParallel(model.generator, device_ids=gpus_list)
     model.discriminator = torch.nn.DataParallel(model.discriminator, device_ids=gpus_list)
