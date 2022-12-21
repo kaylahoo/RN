@@ -58,9 +58,9 @@ class Dataset(torch.utils.data.Dataset):
             img = gray2rgb(img)
 
         # resize/crop if needed
-        if self.training:
-            if size != 0:
-                img = self.resize(img, size, size)
+        # if self.training:
+        if size != 0:
+            img = self.resize(img, size, size)
 
 
 
@@ -88,7 +88,8 @@ class Dataset(torch.utils.data.Dataset):
         else:   # in test mode, there's a one-to-one relationship between mask and image; masks are loaded non random
             # mask = 255 - imread(self.mask_data[index])[:,:,0]    # ICME original (H,W,3) mask: 0 for hole
             mask = imageio.imread(self.mask_data[index])   # mask must be 255 for hole in this Inpainting Model
-            mask = self.resize(mask, imgh, imgw, centerCrop=False)
+            # mask = self.resize(mask, imgh, imgw, centerCrop=False)
+            mask = self.resize(mask, imgh, imgw)
             if len(mask.shape) == 3:
                 mask = rgb2gray(mask)
         mask = (mask > 0).astype(np.uint8) * 255       # threshold due to interpolation
@@ -136,8 +137,7 @@ class Dataset(torch.utils.data.Dataset):
         return []
 
 
-def build_dataloader(flist, mask_flist, augment, training, input_size, batch_size, \
-num_workers, shuffle):
+def build_dataloader(flist, mask_flist, augment, training, input_size, batch_size, num_workers, shuffle):
 
     dataset = Dataset(
         flist=flist,
