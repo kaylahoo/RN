@@ -15,19 +15,20 @@ from torch.utils.data import DataLoader
 
 def my_transforms():
     transform = transforms.Compose([
-        transforms.Resize((256, 256)),
-        transforms.ToTensor(),
+        transforms.Resize((224, 224))
     ])
     return transform
 
 class Dataset(torch.utils.data.Dataset):
-    def __init__(self, flist, mask_flist, augment, training, input_size):
+    def __init__(self, flist, mask_flist, augment, training, input_size, transform):
         super(Dataset, self).__init__()
         self.augment = augment
         self.training = training
         self.data = self.load_flist(flist)
         self.mask_data = self.load_flist(mask_flist)
         self.input_size = input_size
+
+        self.transform = transform
 
     def __len__(self):
         return len(self.data)
@@ -58,13 +59,9 @@ class Dataset(torch.utils.data.Dataset):
             img = gray2rgb(img)
 
         # resize/crop if needed
-        # if self.training:
-        if size != 0:
-            img = self.resize(img, size, size)
-
-
-
-
+        if self.training:
+            if size != 0:
+                img = self.resize(img, size, size)
 
         # load mask
         mask = self.load_mask(img, index)
@@ -73,6 +70,10 @@ class Dataset(torch.utils.data.Dataset):
         if self.augment and np.random.binomial(1, 0.5) > 0:
             img = img[:, ::-1, ...]
             mask = mask[:, ::-1, ...]
+
+        if self.transform:
+            img = self.transform(img)
+            mask = self.transform(mask)
 
         return self.to_tensor(img), self.to_tensor(mask), index
 
@@ -88,8 +89,7 @@ class Dataset(torch.utils.data.Dataset):
         else:   # in test mode, there's a one-to-one relationship between mask and image; masks are loaded non random
             # mask = 255 - imread(self.mask_data[index])[:,:,0]    # ICME original (H,W,3) mask: 0 for hole
             mask = imageio.imread(self.mask_data[index])   # mask must be 255 for hole in this Inpainting Model
-            # mask = self.resize(mask, imgh, imgw, centerCrop=False)
-            mask = self.resize(mask, imgh, imgw)
+            mask = self.resize(mask, imgh, imgw, centerCrop=False)
             if len(mask.shape) == 3:
                 mask = rgb2gray(mask)
         mask = (mask > 0).astype(np.uint8) * 255       # threshold due to interpolation
@@ -144,7 +144,8 @@ def build_dataloader(flist, mask_flist, augment, training, input_size, batch_siz
         mask_flist=mask_flist,
         augment=augment,
         training=training,
-        input_size=input_size
+        input_size=input_size,
+        transform= my_transforms()
         )
 
     print('Total instance number:', dataset.__len__())
