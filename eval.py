@@ -29,9 +29,9 @@ from models import InpaintingModel
 
 # from cal_fid import calculate_fid_given_paths
 
-import lpips
+#import lpips
 
-loss_fn_alex = lpips.LPIPS(net='alex').cuda()
+#loss_fn_alex = lpips.LPIPS(net='alex').cuda()
 
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Video Inpainting with Background Auxilary')
@@ -75,8 +75,8 @@ def eval():
 
             prediction = model.generator(gt, mask)
             prediction = prediction * mask + gt * (1 - mask)
-            batch_avg_lpips = loss_fn_alex(prediction, gt).mean()
-        avg_lpips = avg_lpips + ((batch_avg_lpips- avg_lpips) / count)
+            #batch_avg_lpips = loss_fn_alex(prediction, gt).mean()
+        #avg_lpips = avg_lpips + ((batch_avg_lpips - avg_lpips) / count)
         # t1 = time.clock()
         # du = t1 - t0
         # print("===> Processing: %s || Timer: %.4f sec." % (str(count), du))
@@ -107,12 +107,12 @@ def eval():
             "Number: %05d" % (count * opt.bs),
             " | Average: PSNR: %.4f" % (avg_psnr),
             " SSIM: %.4f" % (avg_ssim),
-            " LPIPS: %.4f" % (avg_lpips),
+            #" LPIPS: %.4f" % (avg_lpips),
             " L1: %.4f" % (avg_l1),
             "| Current batch:", count,
             " PSNR: %.4f" % (batch_avg_psnr),
             " SSIM: %.4f" % (batch_avg_ssim),
-            " LPIPS: %.4f" % (batch_avg_lpips),
+            #" LPIPS: %.4f" % (batch_avg_lpips),
             " L1: %.4f" % (batch_avg_l1), flush=True
         )
 
