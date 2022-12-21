@@ -12,6 +12,7 @@ import cv2
 from skimage.color import rgb2gray, gray2rgb
 from skimage.transform import resize
 from torch.utils.data import DataLoader
+from torchvision improt transforms
 
 def my_transforms():
     transform = transforms.Compose([
