@@ -12,24 +12,22 @@ import cv2
 from skimage.color import rgb2gray, gray2rgb
 from skimage.transform import resize
 from torch.utils.data import DataLoader
-from torchvision import transforms
 
 def my_transforms():
     transform = transforms.Compose([
-        transforms.Resize((224, 224))
+        transforms.Resize((256, 256)),
+        transforms.ToTensor(),
     ])
     return transform
 
 class Dataset(torch.utils.data.Dataset):
-    def __init__(self, flist, mask_flist, augment, training, input_size, transform):
+    def __init__(self, flist, mask_flist, augment, training, input_size):
         super(Dataset, self).__init__()
         self.augment = augment
         self.training = training
         self.data = self.load_flist(flist)
         self.mask_data = self.load_flist(mask_flist)
         self.input_size = input_size
-
-        self.transform = transform
 
     def __len__(self):
         return len(self.data)
@@ -72,9 +70,8 @@ class Dataset(torch.utils.data.Dataset):
             img = img[:, ::-1, ...]
             mask = mask[:, ::-1, ...]
 
-        if self.transform:
-            img = self.transform(img)
-            mask = self.transform(mask)
+        img = self.resize(img, size, size)
+        mask = self.resize(mask, size, size)
 
         return self.to_tensor(img), self.to_tensor(mask), index
 
@@ -145,8 +142,7 @@ def build_dataloader(flist, mask_flist, augment, training, input_size, batch_siz
         mask_flist=mask_flist,
         augment=augment,
         training=training,
-        input_size=input_size,
-        transform= my_transforms()
+        input_size=input_size
         )
 
     print('Total instance number:', dataset.__len__())
