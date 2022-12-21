@@ -70,8 +70,8 @@ class Dataset(torch.utils.data.Dataset):
             img = img[:, ::-1, ...]
             mask = mask[:, ::-1, ...]
 
-        img = self.resize(img, size, size)
-        mask = self.resize(mask, size, size)
+        #img = self.resize(img, size, size)
+        #mask = self.resize(mask, size, size)
 
         return self.to_tensor(img), self.to_tensor(mask), index
 
